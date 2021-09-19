@@ -1,0 +1,46 @@
+# ----- ------ ------
+FROM ubuntu:20.04 as mirrormaker
+
+LABEL maintainer="Christos Kotsis <kotsis.chr@gmail.com>"
+
+## Dockerfile Arguments
+ARG KAFKA_VERSION
+ARG JAVA_VERSION
+ARG RELEASE_DATE
+
+## Dockerfile Environmentals
+ENV KAFKA_VERSION=${KAFKA_VERSION:-"2.8.1"}
+ENV JAVA_VERSION=${JAVA_VERSION:-"11"}
+ENV RELEASE_DATE=${RELEASE_DATE:-"2020-10-27"}
+ENV MM2_SOURCE="/opt/mm2/kafka-mm2.properties"
+ENV MM2_TARGET="/etc/kafka/kafka-mm2.properties"
+
+LABEL kafka.version="${KAFKA_VERSION}"
+LABEL release-date="${RELEASE_DATE}"
+
+RUN mkdir -vp /opt /etc/kafka
+WORKDIR /opt
+
+COPY --from=local/kafka:latest /opt/kafka /opt/kafka
+COPY --from=local/mm2-build:latest /opt/mm2/mm2-init /opt/mm2-init
+
+RUN install /opt/mm2-init /usr/bin/mm2-init && rm /opt/mm2-init
+
+## Update System
+RUN apt-get update -y \
+        && apt-get install apt-utils \
+        && apt-get upgrade -y  
+
+## Install build essentials
+RUN export DEBIAN_FRONTEND=noninteractive; apt-get install -y \
+        ca-certificates
+
+## Install JDK 11 JRE
+RUN export DEBIAN_FRONTEND=noninteractive; apt-get install -y \
+        "openjdk-${JAVA_VERSION}-jre-headless"
+
+COPY run.sh /run.sh
+COPY example /opt/mm2
+
+CMD ["bash", "/run.sh"]
+

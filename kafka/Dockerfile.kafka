@@ -1,0 +1,30 @@
+FROM ubuntu:20.04 as kafka
+
+LABEL maintainer="Christos Kotsis <kotsis.chr@gmail.com>"
+
+## Dockerfile Arguments
+ARG KAFKA_VERSION
+ARG RELEASE_DATE
+
+## Dockerfile Environmentals
+ENV KAFKA_VERSION=${KAFKA_VERSION:-"2.8.1"}
+ENV RELEASE_DATE=${RELEASE_DATE:-"2020-10-27"}
+
+LABEL kafka.version="${KAFKA_VERSION}"
+LABEL release-date="${RELEASE_DATE}"
+
+## Dockerfile Workdir
+WORKDIR /opt/
+
+## Update System
+RUN apt-get update -y \
+        && apt-get install apt-utils \
+        && apt-get upgrade -y  
+
+RUN apt-get update &&\
+    apt-get install -y curl && \
+    apt-get install -y ca-certificates
+
+RUN curl -LO https://downloads.apache.org/kafka/"${KAFKA_VERSION}"/kafka_2.13-"${KAFKA_VERSION}".tgz
+RUN tar xf kafka_2.13-${KAFKA_VERSION}.tgz; mv kafka_2.13-${KAFKA_VERSION} kafka/ ; rm -rf kafka_2.13-${KAFKA_VERSION}.tgz
+

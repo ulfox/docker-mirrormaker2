@@ -1,0 +1,5 @@
+version: '3'
+services:
+  mm2:
+    image: local/mirrormaker2:latest
+    container_name: mirrormaker2

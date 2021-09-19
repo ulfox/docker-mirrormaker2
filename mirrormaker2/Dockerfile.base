@@ -1,0 +1,13 @@
+# ----- ------ ------
+FROM golang:1.17.1-buster as base
+
+LABEL maintainer="Christos Kotsis <kotsis.chr@gmail.com>"
+
+RUN mkdir -vp /opt/mm2
+COPY mm2.go /opt/mm2/
+WORKDIR /opt/mm2
+
+# RUN go mod download
+RUN go mod init "github.com/ulfox/mm2" && go mod vendor && go mod tidy
+RUN CGO_ENABLED=1 GOOS=linux go build -mod=vendor -a -installsuffix cgo -ldflags "-linkmode external -extldflags '-static' -s -w" -o mm2-init mm2.go
+
