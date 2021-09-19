@@ -58,6 +58,17 @@ We can configure and run MM2 with multiple ways
             ...
             KMM2_SOME_KEY_N: SOME_VALUE_N
 
+**Example**
+
+    version: '3'
+    services:
+      mm2:
+        image: local/mirrormaker2:latest
+        container_name: mirrormaker2
+        environment:
+          KMM2_CLUSTERS: source, target
+          KMM2_BOOTSTRAP_SERVERS: PLAINTEXT://localhost:9092
+          ...
 
 ### Mixed Env and Source file
 
@@ -73,3 +84,16 @@ We can configure and run MM2 with multiple ways
         volumes:
             - /path/to/my/kafka-mm2.properties:/opt/mm2/kafka-mm2.properties:ro
 
+
+**Example**
+
+    version: '3'
+    services:
+      mm2:
+        image: local/mirrormaker2:latest
+        container_name: mirrormaker2
+        environment:
+          KMM2_CLUSTERS: source, target
+          KMM2_BOOTSTRAP_SERVERS: PLAINTEXT://localhost:9092
+        volumes:
+            - ./mirrormaker2/example/kafka-mm2.properties:/opt/mm2/kafka-mm2.properties:ro
