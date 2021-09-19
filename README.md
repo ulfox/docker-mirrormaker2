@@ -66,6 +66,10 @@ We can configure and run MM2 with multiple ways
       mm2:
         image: local/mirrormaker2:latest
         container_name: mirrormaker2
+        env:
+            KMM2_SOME_KEY_1: SOME_VALUE_1
+            ...
+            KMM2_SOME_KEY_N: SOME_VALUE_N
         volumes:
             - /path/to/my/kafka-mm2.properties:/opt/mm2/kafka-mm2.properties:ro
 
